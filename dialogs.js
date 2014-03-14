@@ -6,9 +6,9 @@
 
 angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 
-	/**
-	 * Error Dialog Controller
-	 */
+/**
+ * Error Dialog Controller
+ */
 	.controller('errorDialogCtrl',['$scope','$modalInstance','header','msg','defaultStrings',function($scope,$modalInstance,header,msg,defaultStrings){
 		//-- Variables -----//
 
@@ -24,9 +24,9 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 		}; // end close
 	}]) // end ErrorDialogCtrl
 
-	/**
-	 * Wait Dialog Controller
-	 */
+/**
+ * Wait Dialog Controller
+ */
 	.controller('waitDialogCtrl',['$scope','$modalInstance','$timeout','header','msg','progress','defaultStrings',function($scope,$modalInstance,$timeout,header,msg,progress,defaultStrings){
 		//-- Variables -----//
 
@@ -62,9 +62,9 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 		}; // end getProgress
 	}]) // end WaitDialogCtrl
 
-	/**
-	 * Notify Dialog Controller
-	 */
+/**
+ * Notify Dialog Controller
+ */
 	.controller('notifyDialogCtrl',['$scope','$modalInstance','header','msg','defaultStrings',function($scope,$modalInstance,header,msg,defaultStrings){
 		//-- Variables -----//
 
@@ -80,9 +80,9 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 		}; // end close
 	}]) // end WaitDialogCtrl
 
-	/**
-	 * Confirm Dialog Controller
-	 */
+/**
+ * Confirm Dialog Controller
+ */
 	.controller('confirmDialogCtrl',['$scope','$modalInstance','header','msg','defaultStrings',function($scope,$modalInstance,header,msg,defaultStrings){
 		//-- Variables -----//
 
@@ -106,15 +106,17 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 
 angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 
-	/**
-	 * Dialogs Service
-	 */
+/**
+ * Dialogs Service
+ */
 	.factory('$dialogs',['$modal','defaultStrings',function($modal,defaultStrings){
 		return {
-			error : function(header,msg){
+			error : function(header,msg,static){
 				return $modal.open({
 					templateUrl : '/dialogs/error.html',
 					controller : 'errorDialogCtrl',
+					backdrop: (static ? 'static' : true),
+					keyboard: (static ? false: true),
 					resolve : {
 						header : function() { return angular.copy(header); },
 						msg : function() { return angular.copy(msg); }
@@ -122,10 +124,12 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 				}); // end modal.open
 			}, // end error
 
-			wait : function(header,msg,progress){
+			wait : function(header,msg,progress,static){
 				return $modal.open({
 					templateUrl : '/dialogs/wait.html',
 					controller : 'waitDialogCtrl',
+					backdrop: (static ? 'static' : true),
+					keyboard: (static ? false: true),
 					resolve : {
 						header : function() { return angular.copy(header); },
 						msg : function() { return angular.copy(msg); },
@@ -134,10 +138,12 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 				}); // end modal.open
 			}, // end wait
 
-			notify : function(header,msg){
+			notify : function(header,msg,static){
 				return $modal.open({
 					templateUrl : '/dialogs/notify.html',
 					controller : 'notifyDialogCtrl',
+					backdrop: (static ? 'static' : true),
+					keyboard: (static ? false: true),
 					resolve : {
 						header : function() { return angular.copy(header); },
 						msg : function() { return angular.copy(msg); }
@@ -145,10 +151,12 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 				}); // end modal.open
 			}, // end notify
 
-			confirm : function(header,msg){
+			confirm : function(header,msg,static){
 				return $modal.open({
 					templateUrl : '/dialogs/confirm.html',
 					controller : 'confirmDialogCtrl',
+					backdrop: (static ? 'static' : true),
+					keyboard: (static ? false: true),
 					resolve : {
 						header : function() { return angular.copy(header); },
 						msg : function() { return angular.copy(msg); }
@@ -173,9 +181,9 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 				}); // end modal.open
 			}, // end create
 
-      translate : function(newStrings){
-        return angular.extend(defaultStrings,newStrings);
-      } // end translate
+			translate : function(newStrings){
+				return angular.extend(defaultStrings,newStrings);
+			} // end translate
 		};
 	}]); // end $dialogs / dialogs.services
 
