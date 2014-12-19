@@ -69,7 +69,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal'])
 		//-- Variables -----//
 
 		$scope.header = (angular.isDefined(header)) ? header : defaultStrings.notification;
-		$scope.msg = (angular.isDefined(msg)) ? msg : defaultString.notificationMessage;
+		$scope.msg = (angular.isDefined(msg)) ? msg : defaultStrings.notificationMessage;
 		$scope.defaultStrings = defaultStrings;
 
 		//-- Methods -----//
