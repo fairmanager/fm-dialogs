@@ -1,11 +1,11 @@
 {
-  "name": "angular-dialog-service",
-  "version": "3.1.0",
+  "name": "fm-dialogs",
+  "version": "3.1.1",
   "dependencies": {
-    "angular": "1.2.x",
-    "angular-bootstrap": "0.10.x",
-    "bootstrap": "3.0.x",
-    "angular-sanitize": "1.2.x"
+    "angular": "1.3.16",
+    "angular-bootstrap": "0.13.0",
+    "angular-sanitize": "1.3.16",
+    "bootstrap": "3.3.3"
   },
   "main": [
     "dialogs.css",
