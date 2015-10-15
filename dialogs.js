@@ -113,10 +113,10 @@ angular.module( 'dialogs.services', [ 'ui.bootstrap.modal', 'dialogs.controllers
 /**
  * Dialogs Service
  */
-	.factory( '$dialogs', [ '$modal', 'defaultStrings', function( $modal, defaultStrings ) {
+	.factory( '$dialogs', [ '$uibModal', 'defaultStrings', function( $uibModal, defaultStrings ) {
 		return {
 			error : function( header, msg, static ) {
-				return $modal.open( {
+				return $uibModal.open( {
 					templateUrl : '/dialogs/error.html',
 					controller  : 'errorDialogCtrl',
 					backdrop    : (static ? 'static' : true),
@@ -133,7 +133,7 @@ angular.module( 'dialogs.services', [ 'ui.bootstrap.modal', 'dialogs.controllers
 			}, // end error
 
 			wait : function( header, msg, progress, static ) {
-				return $modal.open( {
+				return $uibModal.open( {
 					templateUrl : '/dialogs/wait.html',
 					controller  : 'waitDialogCtrl',
 					backdrop    : (static ? 'static' : true),
@@ -153,7 +153,7 @@ angular.module( 'dialogs.services', [ 'ui.bootstrap.modal', 'dialogs.controllers
 			}, // end wait
 
 			notify : function( header, msg, static ) {
-				return $modal.open( {
+				return $uibModal.open( {
 					templateUrl : '/dialogs/notify.html',
 					controller  : 'notifyDialogCtrl',
 					backdrop    : (static ? 'static' : true),
@@ -170,7 +170,7 @@ angular.module( 'dialogs.services', [ 'ui.bootstrap.modal', 'dialogs.controllers
 			}, // end notify
 
 			confirm : function( header, msg, static ) {
-				return $modal.open( {
+				return $uibModal.open( {
 					templateUrl : '/dialogs/confirm.html',
 					controller  : 'confirmDialogCtrl',
 					backdrop    : (static ? 'static' : true),
@@ -191,7 +191,7 @@ angular.module( 'dialogs.services', [ 'ui.bootstrap.modal', 'dialogs.controllers
 				var k = (angular.isDefined( opts.keyboard )) ? opts.keyboard : true; // values: true,false
 				var b = (angular.isDefined( opts.backdrop )) ? opts.backdrop : true; // values: 'static',true,false
 				var w = (angular.isDefined( opts.windowClass )) ? opts.windowClass : 'dialogs-default'; // additional CSS class(es) to be added to a modal window
-				return $modal.open( {
+				return $uibModal.open( {
 					templateUrl : url,
 					controller  : ctrlr,
 					keyboard    : k,
