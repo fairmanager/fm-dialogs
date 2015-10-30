@@ -4,7 +4,7 @@
 
 //== Controllers =============================================================//
 
-angular.module( "dialogs.controllers", [ "ui.bootstrap.modal" ] )
+angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 
 /**
  * Error Dialog Controller
@@ -41,22 +41,22 @@ angular.module( "dialogs.controllers", [ "ui.bootstrap.modal" ] )
 		// Note: used $timeout instead of $scope.$apply() because I was getting a $$nextSibling error
 
 		// close wait dialog
-		$scope.$on( "dialogs.wait.complete", function() {
+		$scope.$on( "fmDialogs.wait.complete", function() {
 			$timeout( function() {
 				$modalInstance.close();
 			} );
-		} ); // end on(dialogs.wait.complete)
+		} ); // end on(fmDialogs.wait.complete)
 
 		// update the dialog's message
-		$scope.$on( "dialogs.wait.message", function( evt, args ) {
+		$scope.$on( "fmDialogs.wait.message", function( evt, args ) {
 			$scope.msg = (angular.isDefined( args.msg )) ? args.msg : $scope.msg;
-		} ); // end on(dialogs.wait.message)
+		} ); // end on(fmDialogs.wait.message)
 
 		// update the dialog's progress (bar) and/or message
-		$scope.$on( "dialogs.wait.progress", function( evt, args ) {
+		$scope.$on( "fmDialogs.wait.progress", function( evt, args ) {
 			$scope.msg = (angular.isDefined( args.msg )) ? args.msg : $scope.msg;
 			$scope.progress = (angular.isDefined( args.progress )) ? args.progress : $scope.progress;
-		} ); // end on(dialogs.wait.progress)
+		} ); // end on(fmDialogs.wait.progress)
 
 		//-- Methods -----//
 
@@ -103,17 +103,17 @@ angular.module( "dialogs.controllers", [ "ui.bootstrap.modal" ] )
 		$scope.yes = function() {
 			$modalInstance.close( "yes" );
 		}; // end yes
-	} ] ); // end ConfirmDialogCtrl / dialogs.controllers
+	} ] ); // end ConfirmDialogCtrl / fmDialogs.controllers
 
 
 //== Services ================================================================//
 
-angular.module( "dialogs.services", [ "ui.bootstrap.modal", "dialogs.controllers" ] )
+angular.module( "fmDialogs.services", [ "ui.bootstrap.modal", "fmDialogs.controllers" ] )
 
 /**
  * Dialogs Service
  */
-	.factory( "$dialogs", [ "$uibModal", "defaultStrings", function( $uibModal, defaultStrings ) {
+	.factory( "fmDialogs", [ "$uibModal", "defaultStrings", function( $uibModal, defaultStrings ) {
 		return {
 			error : function( header, msg, static ) {
 				return $uibModal.open( {
@@ -209,12 +209,12 @@ angular.module( "dialogs.services", [ "ui.bootstrap.modal", "dialogs.controllers
 				return angular.extend( defaultStrings, newStrings );
 			} // end translate
 		};
-	} ] ); // end $dialogs / dialogs.services
+	} ] ); // end $fmDialogs / fmDialogs.services
 
 
 //== Module ==================================================================//
 
-angular.module( "dialogs", [ "dialogs.services", "ngSanitize" ] ) // requires angular-sanitize.min.js (ngSanitize) //code.angularjs.org/1.2.1/angular-sanitize.min.js
+angular.module( "fmDialogs", [ "fmDialogs.services", "ngSanitize" ] ) // requires angular-sanitize.min.js (ngSanitize) //code.angularjs.org/1.2.1/angular-sanitize.min.js
 
 	// Add default templates via $templateCache
 	.run( [ "$templateCache", "$interpolate", function( $templateCache, $interpolate ) {
@@ -233,7 +233,7 @@ angular.module( "dialogs", [ "dialogs.services", "ngSanitize" ] ) // requires an
 	} ] ); // end run / dialogs
 
 
-angular.module( "dialogs" ).value( "defaultStrings", {
+angular.module( "fmDialogs" ).value( "defaultStrings", {
 	error               : "Error",
 	errorMessage        : "An unknown error has occurred.",
 	close               : "Close",
