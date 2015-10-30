@@ -1,16 +1,38 @@
 {
   "name": "fm-dialogs",
-  "version": "4.1.0",
+  "version": "5.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fairmanager/fm-dialogs.git"
+  },
+  "author": [
+    {
+      "name": "Michael Conroy",
+      "email": "michael.e.conroy@gmail.com",
+      "homepage": "http://michaeleconroy.blogspot.com/"
+    },
+    {
+      "name": "Oliver Salzburg",
+      "email": "oliver.salzburg@gmail.com"
+    }
+  ],
   "devDependencies": {
     "grunt": "latest",
     "grunt-bower": "latest",
-    "grunt-ngmin": "latest",
-    "grunt-contrib-uglify": "latest",
-    "grunt-contrib-cssmin": "~0.6.1",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-watch": "latest",
+    "grunt-contrib-clean": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-copy": "latest",
-    "grunt-contrib-clean": "latest"
-  }
+    "grunt-contrib-cssmin": "~0.6.1",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-ngmin": "latest",
+    "jscs": "^2.5.0"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ]
 }
