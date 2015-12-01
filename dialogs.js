@@ -10,7 +10,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
  * Error Dialog Controller
  */
 	.controller( "errorDialogCtrl",
-	[ "$scope", "$modalInstance", "header", "msg", "defaultStrings", function( $scope, $modalInstance, header, msg, defaultStrings ) {
+	[ "$scope", "$uibModalInstance", "header", "msg", "defaultStrings", function( $scope, $uibModalInstance, header, msg, defaultStrings ) {
 		//-- Variables -----//
 
 		$scope.header = (angular.isDefined( header )) ? header : defaultStrings.error;
@@ -20,7 +20,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 		//-- Methods -----//
 
 		$scope.close = function() {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		}; // end close
 	} ] ) // end ErrorDialogCtrl
 
@@ -28,7 +28,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
  * Wait Dialog Controller
  */
 	.controller( "waitDialogCtrl",
-	[ "$scope", "$modalInstance", "$timeout", "header", "msg", "progress", "defaultStrings", function( $scope, $modalInstance, $timeout, header, msg, progress, defaultStrings ) {
+	[ "$scope", "$uibModalInstance", "$timeout", "header", "msg", "progress", "defaultStrings", function( $scope, $uibModalInstance, $timeout, header, msg, progress, defaultStrings ) {
 		//-- Variables -----//
 
 		$scope.header = (angular.isDefined( header )) ? header : defaultStrings.pleaseWaitEllipsis;
@@ -43,7 +43,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 		// close wait dialog
 		$scope.$on( "fmDialogs.wait.complete", function() {
 			$timeout( function() {
-				$modalInstance.close();
+				$uibModalInstance.close();
 			} );
 		} ); // end on(fmDialogs.wait.complete)
 
@@ -69,7 +69,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
  * Notify Dialog Controller
  */
 	.controller( "notifyDialogCtrl",
-	[ "$scope", "$modalInstance", "header", "msg", "defaultStrings", function( $scope, $modalInstance, header, msg, defaultStrings ) {
+	[ "$scope", "$uibModalInstance", "header", "msg", "defaultStrings", function( $scope, $uibModalInstance, header, msg, defaultStrings ) {
 		//-- Variables -----//
 
 		$scope.header = (angular.isDefined( header )) ? header : defaultStrings.notification;
@@ -79,7 +79,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 		//-- Methods -----//
 
 		$scope.close = function() {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		}; // end close
 	} ] ) // end WaitDialogCtrl
 
@@ -87,7 +87,7 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
  * Confirm Dialog Controller
  */
 	.controller( "confirmDialogCtrl",
-	[ "$scope", "$modalInstance", "header", "msg", "defaultStrings", function( $scope, $modalInstance, header, msg, defaultStrings ) {
+	[ "$scope", "$uibModalInstance", "header", "msg", "defaultStrings", function( $scope, $uibModalInstance, header, msg, defaultStrings ) {
 		//-- Variables -----//
 
 		$scope.header = (angular.isDefined( header )) ? header : defaultStrings.confirmation;
@@ -97,11 +97,11 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 		//-- Methods -----//
 
 		$scope.no = function() {
-			$modalInstance.dismiss( "no" );
+			$uibModalInstance.dismiss( "no" );
 		}; // end close
 
 		$scope.yes = function() {
-			$modalInstance.close( "yes" );
+			$uibModalInstance.close( "yes" );
 		}; // end yes
 	} ] ); // end ConfirmDialogCtrl / fmDialogs.controllers
 
