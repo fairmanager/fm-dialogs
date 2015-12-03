@@ -50,12 +50,18 @@ angular.module( "fmDialogs.controllers", [ "ui.bootstrap.modal" ] )
 		// update the dialog's message
 		$scope.$on( "fmDialogs.wait.message", function( evt, args ) {
 			$scope.msg = (angular.isDefined( args.msg )) ? args.msg : $scope.msg;
+			$timeout( function() {
+				$scope.$apply();
+			} );
 		} ); // end on(fmDialogs.wait.message)
 
 		// update the dialog's progress (bar) and/or message
 		$scope.$on( "fmDialogs.wait.progress", function( evt, args ) {
 			$scope.msg = (angular.isDefined( args.msg )) ? args.msg : $scope.msg;
 			$scope.progress = (angular.isDefined( args.progress )) ? args.progress : $scope.progress;
+			$timeout( function() {
+				$scope.$apply();
+			} );
 		} ); // end on(fmDialogs.wait.progress)
 
 		//-- Methods -----//
