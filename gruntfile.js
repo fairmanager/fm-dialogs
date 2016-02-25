@@ -1,61 +1,85 @@
-module.exports = function(grunt) {
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    clean: ["dist"],
-    ngmin: {
-      build: {
-        src: ['dialogs.js'],
-        dest: 'dist/dialogs.min.js'
-      }
-    },
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-      },
-      dist: {
-        files: [{
-          src: 'dist/dialogs.min.js',
-          dest: 'dist/dialogs.min.js'
-        }]
-      }
-    },
-    jshint: {
-      files: ['gruntfile.js' /*, 'app/js/*.js' */ ],
-      options: {
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true
-        }
-      }
+module.exports = function( grunt ) {
 
-    },
-    cssmin: {
-      add_banner: {
-        options: {
-          banner: '/* minified css files */'
-        },
-        files: {
-          'dist/dialogs.min.css': ['dialogs.css']
-        }
-      }
-    },
-    watch: {
-      files: ['dialogs.js', 'dialogs.css'],
-      tasks: ['clean', 'jshint', 'ngmin', 'uglify', 'cssmin']
-    }
-  });
+	// Project configuration.
+	grunt.initConfig(
+		{
+			pkg : grunt.file.readJSON( "bower.json" ),
 
-  // Libraries
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-ngmin');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-clean');
+			jshint : {
+				options : {
+					jshintrc : true
+				},
+				src     : {
+					src : [
+						"src/*.js"
+					]
+				}
+			},
 
-  // Default Tasks
-  grunt.registerTask('default', ['clean', 'jshint', 'ngmin', 'uglify', 'cssmin']);
+			html2js : {
+				dist : {
+					options : {
+						module         : "fmDialogs",
+						existingModule : true,
+						singleModule   : true,
+						base           : "src",
+						htmlmin        : {
+							collapseWhitespace : true
+						}
+					},
+					files   : [ {
+						src  : "src/*.html",
+						dest : "dist/<%= pkg.name %>.html.js"
+					} ]
+				}
+			},
 
+			ngAnnotate : {
+				js : {
+					src  : "src/<%= pkg.name %>.js",
+					dest : "dist/<%= pkg.name %>.js"
+				}
+			},
+
+			concat : {
+				template : {
+					src  : [ "dist/<%= pkg.name %>.js", "dist/<%= pkg.name %>.html.js" ],
+					dest : "dist/<%= pkg.name %>.tpls.js"
+				}
+			},
+
+			uglify : {
+				js       : {
+					src  : "dist/<%= pkg.name %>.js",
+					dest : "dist/<%= pkg.name %>.min.js"
+				},
+				template : {
+					src  : "dist/<%= pkg.name %>.tpls.js",
+					dest : "dist/<%= pkg.name %>.tpls.min.js"
+				}
+			},
+
+			watch : {
+				files : [ "src/*.js", "dist/demo.html" ],
+				tasks : [ "jshint", "copy", "uglify" ]
+			},
+
+			"gh-pages" : {
+				options : {
+					base : "dist"
+				},
+				src     : [ "**" ]
+			}
+		}
+	);
+
+	grunt.loadNpmTasks( "grunt-contrib-concat" );
+	grunt.loadNpmTasks( "grunt-contrib-jshint" );
+	grunt.loadNpmTasks( "grunt-contrib-uglify" );
+	grunt.loadNpmTasks( "grunt-contrib-watch" );
+	grunt.loadNpmTasks( "grunt-gh-pages" );
+	grunt.loadNpmTasks( "grunt-html2js" );
+	grunt.loadNpmTasks( "grunt-ng-annotate" );
+
+	grunt.registerTask( "default", [ "jshint", "html2js", "ngAnnotate", "concat", "uglify" ] );
 };
