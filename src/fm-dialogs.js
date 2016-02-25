@@ -170,12 +170,12 @@
 		 */
 		.factory( "fmDialogs", [ "$uibModal", "defaultStrings", function( $uibModal, defaultStrings ) {
 			return {
-				error : function( header, msg, static ) {
+				error : function( header, msg, isStatic ) {
 					return $uibModal.open( {
 						templateUrl : "/dialogs/error.html",
 						controller  : "errorDialogCtrl",
-						backdrop    : (static ? "static" : true),
-						keyboard    : (static ? false : true),
+						backdrop    : (isStatic ? "isStatic" : true),
+						keyboard    : (isStatic ? false : true),
 						resolve     : {
 							header : function() {
 								return angular.copy( header );
@@ -187,12 +187,12 @@
 					} ); // end modal.open
 				}, // end error
 
-				wait : function( header, msg, progress, static ) {
+				wait : function( header, msg, progress, isStatic ) {
 					return $uibModal.open( {
 						templateUrl : "/dialogs/wait.html",
 						controller  : "waitDialogCtrl",
-						backdrop    : (static ? "static" : true),
-						keyboard    : (static ? false : true),
+						backdrop    : (isStatic ? "isStatic" : true),
+						keyboard    : (isStatic ? false : true),
 						resolve     : {
 							header   : function() {
 								return angular.copy( header );
@@ -207,12 +207,12 @@
 					} ); // end modal.open
 				}, // end wait
 
-				notify : function( header, msg, static ) {
+				notify : function( header, msg, isStatic ) {
 					return $uibModal.open( {
 						templateUrl : "/dialogs/notify.html",
 						controller  : "notifyDialogCtrl",
-						backdrop    : (static ? "static" : true),
-						keyboard    : (static ? false : true),
+						backdrop    : (isStatic ? "isStatic" : true),
+						keyboard    : (isStatic ? false : true),
 						resolve     : {
 							header : function() {
 								return angular.copy( header );
@@ -224,12 +224,12 @@
 					} ); // end modal.open
 				}, // end notify
 
-				confirm : function( header, msg, static ) {
+				confirm : function( header, msg, isStatic ) {
 					return $uibModal.open( {
 						templateUrl : "/dialogs/confirm.html",
 						controller  : "confirmDialogCtrl",
-						backdrop    : (static ? "static" : true),
-						keyboard    : (static ? false : true),
+						backdrop    : (isStatic ? "isStatic" : true),
+						keyboard    : (isStatic ? false : true),
 						resolve     : {
 							header : function() {
 								return angular.copy( header );
@@ -244,7 +244,7 @@
 				create : function( url, ctrlr, data, opts ) {
 					opts  = angular.isDefined( opts ) ? opts : {};
 					var k = (angular.isDefined( opts.keyboard )) ? opts.keyboard : true; // values: true,false
-					var b = (angular.isDefined( opts.backdrop )) ? opts.backdrop : true; // values: "static",true,false
+					var b = (angular.isDefined( opts.backdrop )) ? opts.backdrop : true; // values: "isStatic",true,false
 					var w = (angular.isDefined( opts.windowClass )) ? opts.windowClass : "dialogs-default"; // additional CSS class(es) to be added to a modal window
 					return $uibModal.open( {
 						templateUrl : url,
