@@ -33,10 +33,10 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title", "close"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title", "confirm", "cancel"];
-	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "error"];
+	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "abort", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
-	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
+	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
@@ -52,21 +52,24 @@
 
 		var serviceInstance;
 
-		self.$get = ["$uibModal", "fmDialogsStrings", function DialogsProvider$$get( $uibModal, fmDialogsStrings ) {
+		/* @ngInject */
+		self.$get = ["$uibModal", "fmDialogsStrings", "fmErrorAnalyzer", function DialogsProvider$$get( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			if( !serviceInstance ) {
-				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings );
+				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer );
 			}
 
 			return serviceInstance;
 		}];
+		self.$get.$inject = ["$uibModal", "fmDialogsStrings", "fmErrorAnalyzer"];
 
 		self.translate = function DialogsProvider$translate() {
 
 		};
 
-		function DialogsService( $uibModal, fmDialogsStrings ) {
+		function DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			this.$uibModal = $uibModal;
 			this.strings   = fmDialogsStrings;
+			this.analyzer  = fmErrorAnalyzer;
 		}
 
 		DialogsService.prototype.alert = function DialogsService$alert( body, title, options ) {
@@ -77,7 +80,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
-					body  : resolver( body || this.strings.notificationMessage ),
+					body  : resolver( body ),
 					title : resolver( title ),
 					close : resolver( options.close || this.strings.close )
 				}
@@ -96,7 +99,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
-					body    : resolver( body || this.strings.confirmationMessage ),
+					body    : resolver( body ),
 					title   : resolver( title ),
 					confirm : resolver( options.confirm || this.strings.confirm ),
 					cancel  : resolver( options.cancel || this.strings.cancel )
@@ -115,11 +118,13 @@
 			}
 			options = options || {};
 
+			var errors = this.analyzer.analyze( error );
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
-					error : resolver( error ),
-					body  : resolver( body || this.strings.errorMessage ),
-					title : resolver( title ),
-					close : resolver( options.close || this.strings.close )
+					errors : resolver( errors ),
+					body   : resolver( body || this.strings.errorMessage ),
+					title  : resolver( title ),
+					close  : resolver( options.close || this.strings.close )
 				}
 			) );
 
@@ -193,11 +198,11 @@
 	};
 
 	/* @ngInject */
-	function ErrorController( $uibModalInstance, body, title, close, error ) {
+	function ErrorController( $uibModalInstance, body, title, close, errors ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
-		this.error             = error;
+		this.errors            = errors;
 		this.closeLabel        = close;
 	}
 
@@ -253,17 +258,14 @@
 
 	function getDialogStrings() {
 		return {
-			errorMessage        : "An unknown error has occurred.",
-			pleaseWaitMessage   : "Waiting on operation to complete.",
-			notificationMessage : "Unknown application notification.",
-			confirmationMessage : "Confirmation required.",
-			close               : "Close",
-			abort               : "Abort",
-			confirm             : "Confirm",
-			cancel              : "Cancel"
+			errorMessage      : "An error has occurred.",
+			pleaseWaitMessage : "Waiting on operation to complete.",
+			close             : "Close",
+			abort             : "Abort",
+			confirm           : "Confirm",
+			cancel            : "Cancel"
 		};
 	}
-
 })();
 
 angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
@@ -272,7 +274,7 @@ angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
   $templateCache.put("confirm.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.confirm()\">{{vm.confirmLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.cancel()\">{{vm.cancelLabel}}</button></div>");
   $templateCache.put("error.html",
-    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><pre>{{vm.error.message}}</pre></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">{{vm.closeLabel}}</button></div>");
+    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><pre ng-repeat=\"error in vm.errors\">{{error.message}}</pre></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">{{vm.closeLabel}}</button></div>");
   $templateCache.put("wait.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><uib-progressbar value=\"vm.options.progress\" animate=\"true\" ng-show=\"vm.hasProgress\"></uib-progressbar><uib-progressbar class=\"progress-striped active\" ng-hide=\"vm.hasProgress || vm.options.finished\"></uib-progressbar></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.abort()\" ng-show=\"!vm.options.finished\">{{vm.abortLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">{{vm.closeLabel}}</button></div>");
 }]);

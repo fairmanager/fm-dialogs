@@ -31,7 +31,7 @@
 
 	/* globals angular */
 
-	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
+	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
@@ -47,9 +47,10 @@
 
 		var serviceInstance;
 
-		self.$get = function DialogsProvider$$get( $uibModal, fmDialogsStrings ) {
+		/* @ngInject */
+		self.$get = function DialogsProvider$$get( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			if( !serviceInstance ) {
-				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings );
+				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer );
 			}
 
 			return serviceInstance;
@@ -59,9 +60,10 @@
 
 		};
 
-		function DialogsService( $uibModal, fmDialogsStrings ) {
+		function DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			this.$uibModal = $uibModal;
 			this.strings   = fmDialogsStrings;
+			this.analyzer  = fmErrorAnalyzer;
 		}
 
 		DialogsService.prototype.alert = function DialogsService$alert( body, title, options ) {
@@ -110,11 +112,13 @@
 			}
 			options = options || {};
 
+			var errors = this.analyzer.analyze( error );
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
-					error : resolver( error ),
-					body  : resolver( body || this.strings.errorMessage ),
-					title : resolver( title ),
-					close : resolver( options.close || this.strings.close )
+					errors : resolver( errors ),
+					body   : resolver( body || this.strings.errorMessage ),
+					title  : resolver( title ),
+					close  : resolver( options.close || this.strings.close )
 				}
 			) );
 
@@ -188,11 +192,11 @@
 	};
 
 	/* @ngInject */
-	function ErrorController( $uibModalInstance, body, title, close, error ) {
+	function ErrorController( $uibModalInstance, body, title, close, errors ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
-		this.error             = error;
+		this.errors            = errors;
 		this.closeLabel        = close;
 	}
 
