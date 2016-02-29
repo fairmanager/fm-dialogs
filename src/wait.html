@@ -5,7 +5,7 @@
 <div class="modal-body">
 	<p ng-bind-html="vm.body | fmHtml"></p>
 	<uib-progressbar value="vm.options.progress" animate="true" ng-show="vm.hasProgress"></uib-progressbar>
-	<uib-progressbar class="progress-striped active" ng-hide="vm.hasProgress"></uib-progressbar>
+	<uib-progressbar class="progress-striped active" ng-hide="vm.hasProgress || vm.options.finished"></uib-progressbar>
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" ng-click="vm.abort()" ng-show="!vm.options.finished">{{vm.abortLabel}}</button>

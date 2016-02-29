@@ -202,17 +202,25 @@
 
 	/* @ngInject */
 	function WaitController( $uibModalInstance, $scope, body, title, close, abort, options ) {
-		this.$uibModalInstance = $uibModalInstance;
-		this.body              = body;
-		this.title             = title;
-		this.closeLabel        = close;
-		this.abortLabel        = abort;
-		this.options           = options;
-		this.hasProgress       = options.progress || options.progress === 0;
+		var self = this;
+
+		self.$uibModalInstance = $uibModalInstance;
+		self.body              = body;
+		self.title             = title;
+		self.closeLabel        = close;
+		self.abortLabel        = abort;
+		self.options           = options;
+		self.hasProgress       = options.progress || options.progress === 0;
 
 		$scope.$watch( "vm.options.finished", function onFinished( isFinished ) {
 			if( isFinished && options.autoClose ) {
 				$uibModalInstance.close();
+			}
+		} );
+
+		$scope.$watch( "vm.options.status", function onStatusUpdated( statusText ) {
+			if( statusText ) {
+				self.body = statusText;
 			}
 		} );
 	}
