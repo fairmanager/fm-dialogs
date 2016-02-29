@@ -1,8 +1,11 @@
-<div class="modal-header dialog-header-wait"><h4 class="modal-title"><span class="glyphicon glyphicon-time"></span>
-	startSym defaultStrings.pleaseWait endSym </h4></div>
-<div class="modal-body"><p ng-bind-html="msg"></p>
-	<div class="progress progress-striped active">
-		<div class="progress-bar progress-bar-info" ng-style="getProgress()"></div>
-		<span class="sr-only"> startSym progress endSym " + startSym + "defaultStrings.percentComplete endSym </span>
-	</div>
+<div class="modal-header">
+	<h4 class="modal-title">{{vm.title}}</h4>
+</div>
+<div class="modal-body">
+	<p>{{vm.body}}</p>
+	<uib-progressbar value="vm.options.progress" animate="true" ng-show="vm.options.progress || vm.options.progress === 0"></uib-progressbar>
+	<uib-progressbar class="progress-striped active" ng-hide="vm.options.progress && vm.options.progress !== 0"></uib-progressbar>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" ng-click="vm.abort()">Abort</button>
 </div>

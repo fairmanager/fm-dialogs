@@ -36,7 +36,8 @@
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
-		.controller( "fmConfirmController", ConfirmController );
+		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmWaitController", WaitController );
 
 	function DialogsProvider() {
 		var self = this;
@@ -71,6 +72,22 @@
 			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
 					body  : resolver( body ),
 					title : resolver( title )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
+		DialogsService.prototype.error  = DialogsService.prototype.alert;
+		DialogsService.prototype.notify = DialogsService.prototype.alert;
+
+		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
+			var modalInstance = this.$uibModal.open( getModalDescription( "wait.html", "fmWaitController", {
+					body    : resolver( body ),
+					title   : resolver( title ),
+					options : resolver( options )
 				}
 			) );
 
@@ -113,6 +130,23 @@
 
 	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
 		this.$uibModalInstance.close();
+	};
+
+	function WaitController( $uibModalInstance, $scope, body, title, options ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.options           = options;
+
+		$scope.$watch( "vm.options.finished", function onFinished( isFinished ) {
+			if( isFinished ) {
+				$uibModalInstance.close();
+			}
+		} );
+	}
+
+	WaitController.prototype.abort = function WaitController$abort() {
+		this.$uibModalInstance.dismiss();
 	};
 
 	function resolver( argument ) {
