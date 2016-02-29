@@ -32,11 +32,15 @@
 	/* globals angular */
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title"];
+	ConfirmController.$inject = ["$uibModalInstance", "body", "title"];
+	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "options"];
 	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
-		.controller( "fmAlertController", AlertController );
+		.controller( "fmAlertController", AlertController )
+		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmWaitController", WaitController );
 
 	function DialogsProvider() {
 		var self = this;
@@ -56,21 +60,54 @@
 		}
 
 		DialogsService.prototype.alert = function DialogsService$alert( body, title ) {
-			var modalInstance = this.$uibModal.open( {
-				templateUrl      : "alert.html",
-				controller       : "fmAlertController",
-				controllerAs     : "vm",
-				bindToController : true,
-				backdrop         : "static",
-				resolve          : {
+			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
 					body  : resolver( body ),
 					title : resolver( title )
 				}
-			} );
+			) );
 
 			modalInstance.result.modal = modalInstance;
 
 			return modalInstance.result;
+		};
+
+		DialogsService.prototype.confirm = function DialogsService$confirm( body, title ) {
+			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
+					body  : resolver( body ),
+					title : resolver( title )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
+		DialogsService.prototype.error  = DialogsService.prototype.alert;
+		DialogsService.prototype.notify = DialogsService.prototype.alert;
+
+		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
+			var modalInstance = this.$uibModal.open( getModalDescription( "wait.html", "fmWaitController", {
+					body    : resolver( body ),
+					title   : resolver( title ),
+					options : resolver( options )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+	}
+
+	function getModalDescription( template, controller, resolve ) {
+		return {
+			templateUrl      : template,
+			controller       : controller,
+			controllerAs     : "vm",
+			bindToController : true,
+			backdrop         : "static",
+			resolve          : resolve
 		};
 	}
 
@@ -82,6 +119,37 @@
 
 	AlertController.prototype.close = function AlertController$close() {
 		this.$uibModalInstance.close();
+	};
+
+	function ConfirmController( $uibModalInstance, body, title ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+	}
+
+	ConfirmController.prototype.cancel = function ConfirmController$cancel() {
+		this.$uibModalInstance.dismiss();
+	};
+
+	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
+		this.$uibModalInstance.close();
+	};
+
+	function WaitController( $uibModalInstance, $scope, body, title, options ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.options           = options;
+
+		$scope.$watch( "vm.options.finished", function onFinished( isFinished ) {
+			if( isFinished ) {
+				$uibModalInstance.close();
+			}
+		} );
+	}
+
+	WaitController.prototype.abort = function WaitController$abort() {
+		this.$uibModalInstance.dismiss();
 	};
 
 	function resolver( argument ) {

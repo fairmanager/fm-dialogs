@@ -12,6 +12,9 @@
 		<div class="row">
 			<div class="well">
 				<button class="btn btn-default" ng-click="alert();">Alert</button>
+				<button class="btn btn-warning" ng-click="confirm();">Confirm</button>
+				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
+				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
 			</div>
 		</div>
 		<div class="row">
@@ -37,12 +40,57 @@
 			.module( "demo", [ "fmDialogs" ] )
 			.controller( "DemoController", DemoController );
 
-	function DemoController( $scope, fmDialogs ) {
+	function DemoController( $interval, $scope, fmDialogs ) {
 		$scope.alert = function alert() {
+			$scope.result = "";
+
 			return fmDialogs
-					.alert( "One fine body…", "Alert title" )
+					.alert( "One fine body…", "Alert" )
 					.then( function() {
 						$scope.result = "Alert was closed";
+					} );
+		};
+
+		$scope.confirm = function alert() {
+			$scope.result = "";
+
+			return fmDialogs
+					.confirm( "Are you sure?", "Confirmation" )
+					.then( function() {
+						$scope.result = "Dialog was confirmed";
+					} )
+					.catch( function() {
+						$scope.result = "Dialog was dismissed"
+					} );
+		};
+
+		$scope.wait = function wait( withProgress ) {
+			$scope.result = "";
+
+			var options = {
+				progress : withProgress ? 0 : undefined,
+				finished : false
+			};
+
+			var intervalPromise = withProgress ? $interval( function updateProgress() {
+				options.finished = ( 100 === ++options.progress );
+				if( options.finished ) {
+					$interval.cancel( intervalPromise );
+				}
+			}, 50 ) : undefined;
+
+			return fmDialogs
+					.wait( "Please wait…", "Pending action", options )
+					.then( function() {
+						$scope.result = "Wait has finished";
+					} )
+					.catch( function() {
+						$scope.result = "Wait was aborted"
+					} )
+					.finally( function() {
+						if( withProgress ) {
+							$interval.cancel( intervalPromise );
+						}
 					} );
 		}
 	}
