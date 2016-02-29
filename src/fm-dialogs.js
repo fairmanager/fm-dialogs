@@ -79,8 +79,8 @@
 		this.title             = title;
 	}
 
-	AlertController.prototype.cancel = function AlertController$cancel() {
-		this.$uibModalInstance.dismiss();
+	AlertController.prototype.close = function AlertController$close() {
+		this.$uibModalInstance.close();
 	};
 
 	function resolver( argument ) {

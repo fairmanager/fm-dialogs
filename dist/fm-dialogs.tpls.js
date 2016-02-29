@@ -80,7 +80,7 @@
 		this.title             = title;
 	}
 
-	AlertController.prototype.close = function AlertController$cancel() {
+	AlertController.prototype.close = function AlertController$close() {
 		this.$uibModalInstance.close();
 	};
 

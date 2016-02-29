@@ -14,6 +14,17 @@
 				<button class="btn btn-default" ng-click="alert();">Alert</button>
 			</div>
 		</div>
+		<div class="row">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="result" class="col-sm-2 control-label">Result</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="result" placeholder="Results will appear here."
+							   readonly ng-model="result">
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 
 </div>
@@ -28,7 +39,11 @@
 
 	function DemoController( $scope, fmDialogs ) {
 		$scope.alert = function alert() {
-			fmDialogs.alert("Body", "Title");
+			return fmDialogs
+					.alert( "One fine body…", "Alert title" )
+					.then( function() {
+						$scope.result = "Alert was closed";
+					} );
 		}
 	}
 </script>
