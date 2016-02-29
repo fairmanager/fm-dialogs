@@ -63,7 +63,7 @@
 			$scope.result = "";
 
 			return fmDialogs
-					.confirm( "Are you sure?", "Confirmation" )
+					.confirm( "Are you sure?" )
 					.then( function() {
 						$scope.result = "Dialog was confirmed";
 					} )
@@ -78,7 +78,7 @@
 			var error = new ReferenceError( "I don't get it." );
 
 			return fmDialogs
-					.error( error, "Something went terribly wrong ☹", "Error" )
+					.error( error, "Something went terribly wrong ☹" )
 					.then( function() {
 						$scope.result = "Error was closed";
 					} );
@@ -102,7 +102,7 @@
 			}, 500 ) : undefined;
 
 			return fmDialogs
-					.wait( "Please wait…", "Pending action", options )
+					.wait( "This will just take a moment…", options )
 					.then( function() {
 						$scope.result = "Wait has finished";
 					} )

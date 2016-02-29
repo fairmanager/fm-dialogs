@@ -64,10 +64,17 @@
 			this.strings   = fmDialogsStrings;
 		}
 
-		DialogsService.prototype.alert = function DialogsService$alert( body, title ) {
+		DialogsService.prototype.alert = function DialogsService$alert( body, title, options ) {
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			options = options || {};
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
 					body  : resolver( body || this.strings.notificationMessage ),
-					title : resolver( title || this.strings.notification )
+					title : resolver( title ),
+					close : resolver( options.close || this.strings.close )
 				}
 			) );
 
@@ -76,10 +83,18 @@
 			return modalInstance.result;
 		};
 
-		DialogsService.prototype.confirm = function DialogsService$confirm( body, title ) {
+		DialogsService.prototype.confirm = function DialogsService$confirm( body, title, options ) {
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			options = options || {};
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
-					body  : resolver( body ),
-					title : resolver( title )
+					body    : resolver( body || this.strings.confirmationMessage ),
+					title   : resolver( title ),
+					confirm : resolver( options.confirm || this.strings.confirm ),
+					cancel  : resolver( options.cancel || this.strings.cancel )
 				}
 			) );
 
@@ -88,11 +103,18 @@
 			return modalInstance.result;
 		};
 
-		DialogsService.prototype.error = function DialogsService$error( error, body, title ) {
+		DialogsService.prototype.error = function DialogsService$error( error, body, title, options ) {
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			options = options || {};
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
 					error : resolver( error ),
-					body  : resolver( body ),
-					title : resolver( title )
+					body  : resolver( body || this.strings.errorMessage ),
+					title : resolver( title ),
+					close : resolver( options.close || this.strings.close )
 				}
 			) );
 
@@ -104,9 +126,17 @@
 		DialogsService.prototype.notify = DialogsService.prototype.alert;
 
 		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			options = options || {};
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "wait.html", "fmWaitController", {
-					body    : resolver( body ),
+					body    : resolver( body || this.strings.pleaseWaitMessage ),
 					title   : resolver( title ),
+					close   : resolver( options.close || this.strings.close ),
+					abort   : resolver( options.abort || this.strings.abort ),
 					options : resolver( options )
 				}
 			) );
@@ -128,20 +158,25 @@
 		};
 	}
 
-	function AlertController( $uibModalInstance, body, title ) {
+	/* @ngInject */
+	function AlertController( $uibModalInstance, body, title, close ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
+		this.closeLabel        = close;
 	}
 
 	AlertController.prototype.close = function AlertController$close() {
 		this.$uibModalInstance.close();
 	};
 
-	function ConfirmController( $uibModalInstance, body, title ) {
+	/* @ngInject */
+	function ConfirmController( $uibModalInstance, body, title, confirm, cancel ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
+		this.confirmLabel      = confirm;
+		this.cancelLabel       = cancel;
 	}
 
 	ConfirmController.prototype.cancel = function ConfirmController$cancel() {
@@ -152,21 +187,26 @@
 		this.$uibModalInstance.close();
 	};
 
-	function ErrorController( $uibModalInstance, body, title, error ) {
+	/* @ngInject */
+	function ErrorController( $uibModalInstance, body, title, close, error ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
 		this.error             = error;
+		this.closeLabel        = close;
 	}
 
 	ErrorController.prototype.close = function ErrorController$close() {
 		this.$uibModalInstance.close();
 	};
 
-	function WaitController( $uibModalInstance, $scope, body, title, options ) {
+	/* @ngInject */
+	function WaitController( $uibModalInstance, $scope, body, title, close, abort, options ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
+		this.closeLabel        = close;
+		this.abortLabel        = abort;
 		this.options           = options;
 		this.hasProgress       = options.progress || options.progress === 0;
 
@@ -200,20 +240,14 @@
 
 	function getDialogStrings() {
 		return {
-			error               : "Error",
 			errorMessage        : "An unknown error has occurred.",
-			close               : "Close",
-			pleaseWait          : "Please Wait",
-			pleaseWaitEllipsis  : "Please Wait…",
 			pleaseWaitMessage   : "Waiting on operation to complete.",
-			percentComplete     : "% Complete",
-			notification        : "Notification",
 			notificationMessage : "Unknown application notification.",
-			confirmation        : "Confirmation",
 			confirmationMessage : "Confirmation required.",
-			ok                  : "OK",
-			yes                 : "Yes",
-			no                  : "No"
+			close               : "Close",
+			abort               : "Abort",
+			confirm             : "Confirm",
+			cancel              : "Cancel"
 		};
 	}
 

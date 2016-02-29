@@ -1,4 +1,4 @@
-<div class="modal-header">
+<div class="modal-header" ng-if="vm.title">
 	<button type="button" class="close" aria-hidden="true" ng-click="vm.cancel()">&times;</button>
 	<h4 class="modal-title">{{vm.title}}</h4>
 </div>
@@ -6,6 +6,6 @@
 	<p ng-bind-html="vm.body | fmHtml"></p>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" ng-click="vm.confirm()">Confirm</button>
-	<button type="button" class="btn btn-primary" ng-click="vm.cancel()">Cancel</button>
+	<button type="button" class="btn btn-default" ng-click="vm.confirm()">{{vm.confirmLabel}}</button>
+	<button type="button" class="btn btn-primary" ng-click="vm.cancel()">{{vm.cancelLabel}}</button>
 </div>
