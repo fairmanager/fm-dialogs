@@ -39,16 +39,17 @@
 		.controller( "fmConfirmController", ConfirmController )
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
-		.value( "fmDialogsStrings", DialogStrings );
+		.filter( "fmHtml", htmlFilterProvider )
+		.value( "fmDialogsStrings", getDialogStrings() );
 
 	function DialogsProvider() {
 		var self = this;
 
 		var serviceInstance;
 
-		self.$get = function DialogsProvider$$get( $uibModal ) {
+		self.$get = function DialogsProvider$$get( $uibModal, fmDialogsStrings ) {
 			if( !serviceInstance ) {
-				serviceInstance = new DialogsService( $uibModal );
+				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings );
 			}
 
 			return serviceInstance;
@@ -58,14 +59,15 @@
 
 		};
 
-		function DialogsService( $uibModal ) {
+		function DialogsService( $uibModal, fmDialogsStrings ) {
 			this.$uibModal = $uibModal;
+			this.strings   = fmDialogsStrings;
 		}
 
 		DialogsService.prototype.alert = function DialogsService$alert( body, title ) {
 			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
-					body  : resolver( body ),
-					title : resolver( title )
+					body  : resolver( body || this.strings.notificationMessage ),
+					title : resolver( title || this.strings.notification )
 				}
 			) );
 
@@ -189,20 +191,30 @@
 		};
 	}
 
-	var DialogStrings = {
-		error               : "Error",
-		errorMessage        : "An unknown error has occurred.",
-		close               : "Close",
-		pleaseWait          : "Please Wait",
-		pleaseWaitEllipsis  : "Please Wait…",
-		pleaseWaitMessage   : "Waiting on operation to complete.",
-		percentComplete     : "% Complete",
-		notification        : "Notification",
-		notificationMessage : "Unknown application notification.",
-		confirmation        : "Confirmation",
-		confirmationMessage : "Confirmation required.",
-		ok                  : "OK",
-		yes                 : "Yes",
-		no                  : "No"
+	/* @ngInject */
+	function htmlFilterProvider( $sce ) {
+		return function htmlFilter( input ) {
+			return $sce.trustAsHtml( input );
+		};
 	}
+
+	function getDialogStrings() {
+		return {
+			error               : "Error",
+			errorMessage        : "An unknown error has occurred.",
+			close               : "Close",
+			pleaseWait          : "Please Wait",
+			pleaseWaitEllipsis  : "Please Wait…",
+			pleaseWaitMessage   : "Waiting on operation to complete.",
+			percentComplete     : "% Complete",
+			notification        : "Notification",
+			notificationMessage : "Unknown application notification.",
+			confirmation        : "Confirmation",
+			confirmationMessage : "Confirmation required.",
+			ok                  : "OK",
+			yes                 : "Yes",
+			no                  : "No"
+		};
+	}
+
 })();

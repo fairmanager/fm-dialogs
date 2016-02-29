@@ -3,7 +3,7 @@
 	<h4 class="modal-title">{{vm.title}}</h4>
 </div>
 <div class="modal-body">
-	<p>{{vm.body}}</p>
+	<p ng-bind-html="vm.body | fmHtml"></p>
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" ng-click="vm.confirm()">Confirm</button>

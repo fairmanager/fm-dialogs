@@ -3,7 +3,7 @@
 	<h4 class="modal-title">{{vm.title}}</h4>
 </div>
 <div class="modal-body">
-	<p>{{vm.body}}</p>
+	<p ng-bind-html="vm.body | fmHtml"></p>
 	<uib-progressbar value="vm.options.progress" animate="true" ng-show="vm.hasProgress"></uib-progressbar>
 	<uib-progressbar class="progress-striped active" ng-hide="vm.hasProgress"></uib-progressbar>
 </div>
