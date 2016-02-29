@@ -165,9 +165,10 @@
 		this.body              = body;
 		this.title             = title;
 		this.options           = options;
+		this.hasProgress       = options.progress || options.progress === 0;
 
 		$scope.$watch( "vm.options.finished", function onFinished( isFinished ) {
-			if( isFinished ) {
+			if( isFinished && options.autoClose ) {
 				$uibModalInstance.close();
 			}
 		} );
@@ -175,6 +176,10 @@
 
 	WaitController.prototype.abort = function WaitController$abort() {
 		this.$uibModalInstance.dismiss();
+	};
+
+	WaitController.prototype.close = function WaitController$close() {
+		this.$uibModalInstance.close();
 	};
 
 	function resolver( argument ) {
