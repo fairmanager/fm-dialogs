@@ -72,7 +72,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
-					body  : resolver( body || this.strings.notificationMessage ),
+					body  : resolver( body ),
 					title : resolver( title ),
 					close : resolver( options.close || this.strings.close )
 				}
@@ -91,7 +91,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
-					body    : resolver( body || this.strings.confirmationMessage ),
+					body    : resolver( body ),
 					title   : resolver( title ),
 					confirm : resolver( options.confirm || this.strings.confirm ),
 					cancel  : resolver( options.cancel || this.strings.cancel )
@@ -248,15 +248,12 @@
 
 	function getDialogStrings() {
 		return {
-			errorMessage        : "An unknown error has occurred.",
-			pleaseWaitMessage   : "Waiting on operation to complete.",
-			notificationMessage : "Unknown application notification.",
-			confirmationMessage : "Confirmation required.",
-			close               : "Close",
-			abort               : "Abort",
-			confirm             : "Confirm",
-			cancel              : "Cancel"
+			errorMessage      : "An error has occurred.",
+			pleaseWaitMessage : "Waiting on operation to complete.",
+			close             : "Close",
+			abort             : "Abort",
+			confirm           : "Confirm",
+			cancel            : "Cancel"
 		};
 	}
-
 })();
