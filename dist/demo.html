@@ -13,6 +13,7 @@
 			<div class="well">
 				<button class="btn btn-default" ng-click="alert();">Alert</button>
 				<button class="btn btn-warning" ng-click="confirm();">Confirm</button>
+				<button class="btn btn-danger" ng-click="error();">Error</button>
 				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
 				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
 			</div>
@@ -61,6 +62,18 @@
 					} )
 					.catch( function() {
 						$scope.result = "Dialog was dismissed"
+					} );
+		};
+
+		$scope.error = function error() {
+			$scope.result = "";
+
+			var error = new ReferenceError( "I don't get it." );
+
+			return fmDialogs
+					.error( error, "Something went terribly wrong ☹", "Error" )
+					.then( function() {
+						$scope.result = "Error was closed";
 					} );
 		};
 

@@ -33,6 +33,7 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title"];
+	ErrorController.$inject = ["$uibModalInstance", "body", "title", "error"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "options"];
 	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
 
@@ -40,6 +41,7 @@
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
 		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController );
 
 	function DialogsProvider() {
@@ -83,7 +85,19 @@
 			return modalInstance.result;
 		};
 
-		DialogsService.prototype.error  = DialogsService.prototype.alert;
+		DialogsService.prototype.error = function DialogsService$error( error, body, title ) {
+			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
+					error : resolver( error ),
+					body  : resolver( body ),
+					title : resolver( title )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
 		DialogsService.prototype.notify = DialogsService.prototype.alert;
 
 		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
@@ -135,6 +149,17 @@
 		this.$uibModalInstance.close();
 	};
 
+	function ErrorController( $uibModalInstance, body, title, error ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.error             = error;
+	}
+
+	ErrorController.prototype.close = function ErrorController$close() {
+		this.$uibModalInstance.close();
+	};
+
 	function WaitController( $uibModalInstance, $scope, body, title, options ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
@@ -163,7 +188,9 @@ angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
   $templateCache.put("alert.html",
     "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">Close</button></div>");
   $templateCache.put("confirm.html",
-    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.cancel()\">Cancel</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.confirm()\">Confirm</button></div>");
+    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.confirm()\">Confirm</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.cancel()\">Cancel</button></div>");
+  $templateCache.put("error.html",
+    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p><pre>{{vm.error}}</pre></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">Close</button></div>");
   $templateCache.put("notify.html",
     "<div class=\"modal-header dialog-header-notify\"><button type=\"button\" class=\"close\" ng-click=\"close()\" class=\"pull-right\">&times;</button><h4 class=\"modal-title text-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> startSym header endSym</h4></div><div class=\"modal-body text-info\" ng-bind-html=\"msg\"></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" ng-click=\"close()\">startSym defaultStrings.ok endSym</button></div>");
   $templateCache.put("wait.html",

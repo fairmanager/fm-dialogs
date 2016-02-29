@@ -33,6 +33,7 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title"];
+	ErrorController.$inject = ["$uibModalInstance", "body", "title", "error"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "options"];
 	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
 
@@ -40,6 +41,7 @@
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
 		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController );
 
 	function DialogsProvider() {
@@ -83,7 +85,19 @@
 			return modalInstance.result;
 		};
 
-		DialogsService.prototype.error  = DialogsService.prototype.alert;
+		DialogsService.prototype.error = function DialogsService$error( error, body, title ) {
+			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
+					error : resolver( error ),
+					body  : resolver( body ),
+					title : resolver( title )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
 		DialogsService.prototype.notify = DialogsService.prototype.alert;
 
 		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
@@ -132,6 +146,17 @@
 	};
 
 	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
+		this.$uibModalInstance.close();
+	};
+
+	function ErrorController( $uibModalInstance, body, title, error ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.error             = error;
+	}
+
+	ErrorController.prototype.close = function ErrorController$close() {
 		this.$uibModalInstance.close();
 	};
 
