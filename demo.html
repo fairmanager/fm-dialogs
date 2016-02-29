@@ -13,12 +13,20 @@
 			<div class="well">
 				<button class="btn btn-default" ng-click="alert();">Alert</button>
 				<button class="btn btn-warning" ng-click="confirm();">Confirm</button>
+				<button class="btn btn-danger" ng-click="error();">Error</button>
 				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
 				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
 			</div>
 		</div>
 		<div class="row">
 			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<label>
+							<input type="checkbox" ng-model="autoClose"> Auto-close finished wait dialogs
+						</label>
+					</div>
+				</div>
 				<div class="form-group">
 					<label for="result" class="col-sm-2 control-label">Result</label>
 					<div class="col-sm-10">
@@ -45,7 +53,7 @@
 			$scope.result = "";
 
 			return fmDialogs
-					.alert( "One fine body…", "Alert" )
+					.alert( "<i>Something</i> happened and this is how I'm letting you know." )
 					.then( function() {
 						$scope.result = "Alert was closed";
 					} );
@@ -55,7 +63,7 @@
 			$scope.result = "";
 
 			return fmDialogs
-					.confirm( "Are you sure?", "Confirmation" )
+					.confirm( "Are you sure?" )
 					.then( function() {
 						$scope.result = "Dialog was confirmed";
 					} )
@@ -64,23 +72,37 @@
 					} );
 		};
 
+		$scope.error = function error() {
+			$scope.result = "";
+
+			var error = new ReferenceError( "I don't get it." );
+
+			return fmDialogs
+					.error( error, "Something went terribly wrong ☹" )
+					.then( function() {
+						$scope.result = "Error was closed";
+					} );
+		};
+
 		$scope.wait = function wait( withProgress ) {
 			$scope.result = "";
 
 			var options = {
-				progress : withProgress ? 0 : undefined,
-				finished : false
+				progress  : withProgress ? 0 : undefined,
+				finished  : false,
+				autoClose : $scope.autoClose
 			};
 
 			var intervalPromise = withProgress ? $interval( function updateProgress() {
-				options.finished = ( 100 === ++options.progress );
+				options.progress += Math.random() * 20;
+				options.finished = ( 100 <= options.progress );
 				if( options.finished ) {
 					$interval.cancel( intervalPromise );
 				}
-			}, 50 ) : undefined;
+			}, 500 ) : undefined;
 
 			return fmDialogs
-					.wait( "Please wait…", "Pending action", options )
+					.wait( "This will just take a moment…", options )
 					.then( function() {
 						$scope.result = "Wait has finished";
 					} )
