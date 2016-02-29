@@ -32,11 +32,13 @@
 	/* globals angular */
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title"];
+	ConfirmController.$inject = ["$uibModalInstance", "body", "title"];
 	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
-		.controller( "fmAlertController", AlertController );
+		.controller( "fmAlertController", AlertController )
+		.controller( "fmConfirmController", ConfirmController );
 
 	function DialogsProvider() {
 		var self = this;
@@ -72,6 +74,24 @@
 
 			return modalInstance.result;
 		};
+
+		DialogsService.prototype.confirm = function DialogsService$confirm( body, title ) {
+			var modalInstance = this.$uibModal.open( {
+				templateUrl      : "confirm.html",
+				controller       : "fmConfirmController",
+				controllerAs     : "vm",
+				bindToController : true,
+				backdrop         : "static",
+				resolve          : {
+					body  : resolver( body ),
+					title : resolver( title )
+				}
+			} );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
 	}
 
 	function AlertController( $uibModalInstance, body, title ) {
@@ -84,6 +104,20 @@
 		this.$uibModalInstance.close();
 	};
 
+	function ConfirmController( $uibModalInstance, body, title ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+	}
+
+	ConfirmController.prototype.cancel = function ConfirmController$cancel() {
+		this.$uibModalInstance.dismiss();
+	};
+
+	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
+		this.$uibModalInstance.close();
+	};
+
 	function resolver( argument ) {
 		return function resolveWithArgument() {
 			return argument;
@@ -93,9 +127,9 @@
 
 angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
   $templateCache.put("alert.html",
-    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">×</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">Close</button></div>");
+    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">Close</button></div>");
   $templateCache.put("confirm.html",
-    "<div class=\"modal-header dialog-header-confirm\"><button type=\"button\" class=\"close\" ng-click=\"no()\">&times;</button><h4 class=\"modal-title\"><span class=\"glyphicon glyphicon-check\"></span> startSym header endSym</h4></div><div class=\"modal-body\" ng-bind-html=\"msg\"></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"yes()\">startSym defaultStrings.yes endSym</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"no()\">startSym defaultStrings.no endSym</button></div>");
+    "<div class=\"modal-header\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p>{{vm.body}}</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.cancel()\">Cancel</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.confirm()\">Confirm</button></div>");
   $templateCache.put("error.html",
     "<div class=\"modal-header dialog-header-error\"><button type=\"button\" class=\"close\" ng-click=\"close()\">&times;</button><h4 class=\"modal-title text-danger\"><span class=\"glyphicon glyphicon-warning-sign\"></span> <span ng-bind-html=\"header\"></span></h4></div><div class=\"modal-body text-danger\" ng-bind-html=\"msg\"></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"close()\">startSym defaultStrings.close endSym</button></div>");
   $templateCache.put("notify.html",

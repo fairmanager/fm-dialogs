@@ -32,11 +32,13 @@
 	/* globals angular */
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title"];
+	ConfirmController.$inject = ["$uibModalInstance", "body", "title"];
 	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
-		.controller( "fmAlertController", AlertController );
+		.controller( "fmAlertController", AlertController )
+		.controller( "fmConfirmController", ConfirmController );
 
 	function DialogsProvider() {
 		var self = this;
@@ -72,6 +74,24 @@
 
 			return modalInstance.result;
 		};
+
+		DialogsService.prototype.confirm = function DialogsService$confirm( body, title ) {
+			var modalInstance = this.$uibModal.open( {
+				templateUrl      : "confirm.html",
+				controller       : "fmConfirmController",
+				controllerAs     : "vm",
+				bindToController : true,
+				backdrop         : "static",
+				resolve          : {
+					body  : resolver( body ),
+					title : resolver( title )
+				}
+			} );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
 	}
 
 	function AlertController( $uibModalInstance, body, title ) {
@@ -81,6 +101,20 @@
 	}
 
 	AlertController.prototype.close = function AlertController$close() {
+		this.$uibModalInstance.close();
+	};
+
+	function ConfirmController( $uibModalInstance, body, title ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+	}
+
+	ConfirmController.prototype.cancel = function ConfirmController$cancel() {
+		this.$uibModalInstance.dismiss();
+	};
+
+	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
 		this.$uibModalInstance.close();
 	};
 
