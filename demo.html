@@ -93,13 +93,15 @@
 				autoClose : $scope.autoClose
 			};
 
-			var intervalPromise = withProgress ? $interval( function updateProgress() {
+			var intervalPromise = $interval( function updateProgress() {
+				options.progress = options.progress || 1;
 				options.progress += Math.random() * 20;
 				options.finished = ( 100 <= options.progress );
 				if( options.finished ) {
+					options.status = "Completed";
 					$interval.cancel( intervalPromise );
 				}
-			}, 500 ) : undefined;
+			}, 500 );
 
 			return fmDialogs
 					.wait( "This will just take a moment…", options )

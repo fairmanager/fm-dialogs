@@ -207,17 +207,25 @@
 
 	/* @ngInject */
 	function WaitController( $uibModalInstance, $scope, body, title, close, abort, options ) {
-		this.$uibModalInstance = $uibModalInstance;
-		this.body              = body;
-		this.title             = title;
-		this.closeLabel        = close;
-		this.abortLabel        = abort;
-		this.options           = options;
-		this.hasProgress       = options.progress || options.progress === 0;
+		var self = this;
+
+		self.$uibModalInstance = $uibModalInstance;
+		self.body              = body;
+		self.title             = title;
+		self.closeLabel        = close;
+		self.abortLabel        = abort;
+		self.options           = options;
+		self.hasProgress       = options.progress || options.progress === 0;
 
 		$scope.$watch( "vm.options.finished", function onFinished( isFinished ) {
 			if( isFinished && options.autoClose ) {
 				$uibModalInstance.close();
+			}
+		} );
+
+		$scope.$watch( "vm.options.status", function onStatusUpdated( statusText ) {
+			if( statusText ) {
+				self.body = statusText;
 			}
 		} );
 	}
@@ -266,5 +274,5 @@ angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
   $templateCache.put("error.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><pre>{{vm.error.message}}</pre></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">{{vm.closeLabel}}</button></div>");
   $templateCache.put("wait.html",
-    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><uib-progressbar value=\"vm.options.progress\" animate=\"true\" ng-show=\"vm.hasProgress\"></uib-progressbar><uib-progressbar class=\"progress-striped active\" ng-hide=\"vm.hasProgress\"></uib-progressbar></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.abort()\" ng-show=\"!vm.options.finished\">{{vm.abortLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">{{vm.closeLabel}}</button></div>");
+    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><uib-progressbar value=\"vm.options.progress\" animate=\"true\" ng-show=\"vm.hasProgress\"></uib-progressbar><uib-progressbar class=\"progress-striped active\" ng-hide=\"vm.hasProgress || vm.options.finished\"></uib-progressbar></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.abort()\" ng-show=\"!vm.options.finished\">{{vm.abortLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">{{vm.closeLabel}}</button></div>");
 }]);
