@@ -3,6 +3,11 @@
   "version": "5.1.1",
   "description": "FairManager Dialog Component",
   "main": "dist/fm-dialogs.tpls.js",
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-ui-bootstrap": "^1.2.1",
+    "bootstrap": "^3.3.6"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",
@@ -26,23 +31,8 @@
     "bootstrap",
     "dialogs"
   ],
-  "author": [
-    {
-      "name": "Michael Conroy",
-      "email": "michael.e.conroy@gmail.com",
-      "homepage": "http://michaeleconroy.blogspot.com/"
-    },
-    {
-      "name": "Oliver Salzburg",
-      "email": "oliver.salzburg@gmail.com"
-    }
-  ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+  "author": "Oliver Salzburg <oliver.salzburg@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fairmanager/fm-dialogs/issues"
   },

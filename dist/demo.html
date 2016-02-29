@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+<head>
+	<title></title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
+</head>
+<body ng-controller="DemoController">
+<div class="container">
+	<div class="header">
+		<h3>fm-dialogs</h3>
+		<div class="row">
+			<div class="well">
+				<button class="btn btn-default" ng-click="alert();">Alert</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.js"></script>
+<script src="fm-dialogs.tpls.js"></script>
+<script>
+	angular
+			.module( "demo", [ "fmDialogs" ] )
+			.controller( "DemoController", DemoController );
+
+	function DemoController( $scope, fmDialogs ) {
+		$scope.alert = function alert() {
+			fmDialogs.alert("Body", "Title");
+		}
+	}
+</script>
+</body>
+</html>
