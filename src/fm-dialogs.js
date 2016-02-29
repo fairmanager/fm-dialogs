@@ -38,19 +38,24 @@
 		.controller( "fmAlertController", AlertController )
 		.controller( "fmConfirmController", ConfirmController )
 		.controller( "fmErrorController", ErrorController )
-		.controller( "fmWaitController", WaitController );
+		.controller( "fmWaitController", WaitController )
+		.value( "fmDialogsStrings", DialogStrings );
 
 	function DialogsProvider() {
 		var self = this;
 
 		var serviceInstance;
 
-		self.$get = function fmDialogsProvider$$get( $uibModal ) {
+		self.$get = function DialogsProvider$$get( $uibModal ) {
 			if( !serviceInstance ) {
 				serviceInstance = new DialogsService( $uibModal );
 			}
 
 			return serviceInstance;
+		};
+
+		self.translate = function DialogsProvider$translate() {
+
 		};
 
 		function DialogsService( $uibModal ) {
@@ -182,5 +187,22 @@
 		return function resolveWithArgument() {
 			return argument;
 		};
+	}
+
+	var DialogStrings = {
+		error               : "Error",
+		errorMessage        : "An unknown error has occurred.",
+		close               : "Close",
+		pleaseWait          : "Please Wait",
+		pleaseWaitEllipsis  : "Please Wait…",
+		pleaseWaitMessage   : "Waiting on operation to complete.",
+		percentComplete     : "% Complete",
+		notification        : "Notification",
+		notificationMessage : "Unknown application notification.",
+		confirmation        : "Confirmation",
+		confirmationMessage : "Confirmation required.",
+		ok                  : "OK",
+		yes                 : "Yes",
+		no                  : "No"
 	}
 })();
