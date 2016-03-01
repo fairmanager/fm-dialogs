@@ -1,6 +1,6 @@
 {
   "name": "fm-dialogs",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "FairManager Dialog Component",
   "main": "dist/fm-dialogs.tpls.js",
   "dependencies": {
