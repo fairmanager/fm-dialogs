@@ -37,7 +37,6 @@
 		errorMessage      : "An error has occurred.",
 		pleaseWaitMessage : "Waiting on operation to complete.",
 		close             : "Close",
-		abort             : "Abort",
 		confirm           : "Confirm",
 		cancel            : "Cancel"
 	};
@@ -159,7 +158,7 @@
 					body    : resolver( body || this.strings.pleaseWaitMessage ),
 					title   : resolver( title ),
 					close   : resolver( options.close || this.strings.close ),
-					abort   : resolver( options.abort || this.strings.abort ),
+					cancel  : resolver( options.cancel || this.strings.cancel ),
 					options : resolver( options )
 				}
 			) );
@@ -233,14 +232,14 @@
 	};
 
 	/* @ngInject */
-	function WaitController( $uibModalInstance, $scope, body, title, close, abort, options ) {
+	function WaitController( $uibModalInstance, $scope, body, title, close, cancel, options ) {
 		var self = this;
 
 		self.$uibModalInstance = $uibModalInstance;
 		self.body              = body;
 		self.title             = title;
 		self.closeLabel        = close;
-		self.abortLabel        = abort;
+		self.cancelLabel       = cancel;
 		self.options           = options;
 		self.hasProgress       = options.progress || options.progress === 0;
 
@@ -257,7 +256,7 @@
 		} );
 	}
 
-	WaitController.prototype.abort = function WaitController$abort() {
+	WaitController.prototype.cancel = function WaitController$cancel() {
 		this.$uibModalInstance.dismiss();
 	};
 
