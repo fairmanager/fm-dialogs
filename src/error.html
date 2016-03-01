@@ -4,7 +4,10 @@
 </div>
 <div class="modal-body">
 	<p ng-bind-html="vm.body | fmHtml"></p>
-	<pre ng-repeat="error in vm.errors">{{error.message}}</pre>
+	<b class="text-danger" ng-if="vm.errors.length">{{vm.errors[0].message}}</b>
+	<p ng-if="1 <= vm.errors.length">
+		<span ng-repeat="error in vm.errors" ng-if="$index > 0">{{error.message}}<br></span>
+	</p>
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" ng-click="vm.close()">{{vm.closeLabel}}</button>

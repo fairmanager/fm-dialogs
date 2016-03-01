@@ -42,7 +42,7 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.js"></script>
-<script src="//cdn.rawgit.com/fairmanager/fm-error-analyzer/master/src/fm-error-analyzer.js"></script>
+<script src="//rawgit.com/fairmanager/fm-error-analyzer/master/src/fm-error-analyzer.js"></script>
 <script src="fm-dialogs.tpls.js"></script>
 <script>
 	angular
@@ -76,7 +76,21 @@
 		$scope.error = function error() {
 			$scope.result = "";
 
-			var error = new ReferenceError( "I don't get it." );
+			var error = {
+				status     : 503,
+				statusText : "Service Unavailable",
+				data       : {
+					error : {
+						info    : "The communication with the backend service failed",
+						message : "message could not be delivered",
+						inner   : {
+							address : "127.0.0.1",
+							port    : "7333",
+							code    : "ECONNREFUSED"
+						}
+					}
+				}
+			};
 
 			return fmDialogs
 					.error( error, "Something went terribly wrong ☹" )
