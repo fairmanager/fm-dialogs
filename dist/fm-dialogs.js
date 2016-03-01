@@ -160,14 +160,18 @@
 			}
 			options = options || {};
 
-			var modalInstance = this.$uibModal.open( getModalDescription( "wait.html", "fmWaitController", {
+			var modalDescription = getModalDescription( "wait.html", "fmWaitController", {
 					body    : resolver( body || this.strings.pleaseWaitMessage ),
 					title   : resolver( title ),
 					close   : resolver( options.close || this.strings.close ),
 					cancel  : resolver( options.cancel || this.strings.cancel ),
 					options : resolver( options )
 				}
-			) );
+			);
+
+			modalDescription.keyboard = options.cancelable;
+
+			var modalInstance = this.$uibModal.open( modalDescription );
 
 			modalInstance.result.modal   = modalInstance;
 			modalInstance.result.options = options;
