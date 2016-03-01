@@ -33,6 +33,15 @@
 
 	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
+	var dialogStrings = {
+		errorMessage      : "An error has occurred.",
+		pleaseWaitMessage : "Waiting on operation to complete.",
+		close             : "Close",
+		abort             : "Abort",
+		confirm           : "Confirm",
+		cancel            : "Cancel"
+	};
+
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
@@ -40,7 +49,7 @@
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
 		.filter( "fmHtml", htmlFilterProvider )
-		.value( "fmDialogsStrings", getDialogStrings() );
+		.value( "fmDialogsStrings", dialogStrings );
 
 	function DialogsProvider() {
 		var self = this;
@@ -56,9 +65,11 @@
 			return serviceInstance;
 		};
 
-		self.translate = function DialogsProvider$translate() {
-
+		self.translate = function DialogsProvider$translate( strings ) {
+			angular.copy( strings, dialogStrings );
 		};
+
+		DialogsService.prototype.translate = self.translate;
 
 		function DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			this.$uibModal = $uibModal;
@@ -264,17 +275,6 @@
 	function htmlFilterProvider( $sce ) {
 		return function htmlFilter( input ) {
 			return $sce.trustAsHtml( input );
-		};
-	}
-
-	function getDialogStrings() {
-		return {
-			errorMessage      : "An error has occurred.",
-			pleaseWaitMessage : "Waiting on operation to complete.",
-			close             : "Close",
-			abort             : "Abort",
-			confirm           : "Confirm",
-			cancel            : "Cancel"
 		};
 	}
 })();

@@ -16,6 +16,7 @@
 				<button class="btn btn-danger" ng-click="error();">Error</button>
 				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
 				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
+				<button class="btn btn-link" ng-click="translate();">Translate</button>
 			</div>
 		</div>
 		<div class="row">
@@ -37,7 +38,6 @@
 			</form>
 		</div>
 	</div>
-
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
@@ -117,7 +117,11 @@
 							$interval.cancel( intervalPromise );
 						}
 					} );
-		}
+		};
+
+		$scope.translate = function translate() {
+			fmDialogs.translate( { close : "Schließen" } );
+		};
 	}
 </script>
 </body>
