@@ -120,7 +120,13 @@
 		};
 
 		$scope.translate = function translate() {
-			fmDialogs.translate( { close : "Schließen" } );
+			fmDialogs.translate( {
+				"errorMessage"      : "Ein Fehler ist aufgetreten.",
+				"pleaseWaitMessage" : "Warte auf Fertigstellung des Vorgangs.",
+				"close"             : "Schließen",
+				"confirm"           : "Akzeptieren",
+				"cancel"            : "Abbrechen"
+			} );
 		};
 	}
 </script>
