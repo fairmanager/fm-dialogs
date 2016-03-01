@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015, HARTWIG Communication & Events GmbH & Co. KG
+ * Copyright (C) 2014-2016, HARTWIG Communication & Events GmbH & Co. KG
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,10 +33,10 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title", "close"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title", "confirm", "cancel"];
-	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "error"];
+	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "abort", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
-	angular.module( "fmDialogs", [ "ui.bootstrap" ] );
+	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
 	angular.module( "fmDialogs" )
 		.provider( "fmDialogs", DialogsProvider )
@@ -52,21 +52,24 @@
 
 		var serviceInstance;
 
-		self.$get = ["$uibModal", "fmDialogsStrings", function DialogsProvider$$get( $uibModal, fmDialogsStrings ) {
+		/* @ngInject */
+		self.$get = ["$uibModal", "fmDialogsStrings", "fmErrorAnalyzer", function DialogsProvider$$get( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			if( !serviceInstance ) {
-				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings );
+				serviceInstance = new DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer );
 			}
 
 			return serviceInstance;
 		}];
+		self.$get.$inject = ["$uibModal", "fmDialogsStrings", "fmErrorAnalyzer"];
 
 		self.translate = function DialogsProvider$translate() {
 
 		};
 
-		function DialogsService( $uibModal, fmDialogsStrings ) {
+		function DialogsService( $uibModal, fmDialogsStrings, fmErrorAnalyzer ) {
 			this.$uibModal = $uibModal;
 			this.strings   = fmDialogsStrings;
+			this.analyzer  = fmErrorAnalyzer;
 		}
 
 		DialogsService.prototype.alert = function DialogsService$alert( body, title, options ) {
@@ -77,7 +80,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "alert.html", "fmAlertController", {
-					body  : resolver( body || this.strings.notificationMessage ),
+					body  : resolver( body ),
 					title : resolver( title ),
 					close : resolver( options.close || this.strings.close )
 				}
@@ -96,7 +99,7 @@
 			options = options || {};
 
 			var modalInstance = this.$uibModal.open( getModalDescription( "confirm.html", "fmConfirmController", {
-					body    : resolver( body || this.strings.confirmationMessage ),
+					body    : resolver( body ),
 					title   : resolver( title ),
 					confirm : resolver( options.confirm || this.strings.confirm ),
 					cancel  : resolver( options.cancel || this.strings.cancel )
@@ -109,17 +112,23 @@
 		};
 
 		DialogsService.prototype.error = function DialogsService$error( error, body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
 			if( typeof title === "object" ) {
 				options = title;
 				title   = undefined;
 			}
 			options = options || {};
 
+			var errors = this.analyzer.analyze( error );
+
 			var modalInstance = this.$uibModal.open( getModalDescription( "error.html", "fmErrorController", {
-					error : resolver( error ),
-					body  : resolver( body || this.strings.errorMessage ),
-					title : resolver( title ),
-					close : resolver( options.close || this.strings.close )
+					errors : resolver( errors ),
+					body   : resolver( body || this.strings.errorMessage ),
+					title  : resolver( title ),
+					close  : resolver( options.close || this.strings.close )
 				}
 			) );
 
@@ -131,6 +140,10 @@
 		DialogsService.prototype.notify = DialogsService.prototype.alert;
 
 		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
 			if( typeof title === "object" ) {
 				options = title;
 				title   = undefined;
@@ -146,7 +159,16 @@
 				}
 			) );
 
-			modalInstance.result.modal = modalInstance;
+			modalInstance.result.modal   = modalInstance;
+			modalInstance.result.options = options;
+
+			modalInstance.result.update = function update( progress, status ) {
+				options.progrss = progress;
+				options.status  = status;
+			};
+			modalInstance.result.close  = function close() {
+				modalInstance.close();
+			};
 
 			return modalInstance.result;
 		};
@@ -193,11 +215,11 @@
 	};
 
 	/* @ngInject */
-	function ErrorController( $uibModalInstance, body, title, close, error ) {
+	function ErrorController( $uibModalInstance, body, title, close, errors ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
 		this.title             = title;
-		this.error             = error;
+		this.errors            = errors;
 		this.closeLabel        = close;
 	}
 
@@ -253,15 +275,12 @@
 
 	function getDialogStrings() {
 		return {
-			errorMessage        : "An unknown error has occurred.",
-			pleaseWaitMessage   : "Waiting on operation to complete.",
-			notificationMessage : "Unknown application notification.",
-			confirmationMessage : "Confirmation required.",
-			close               : "Close",
-			abort               : "Abort",
-			confirm             : "Confirm",
-			cancel              : "Cancel"
+			errorMessage      : "An error has occurred.",
+			pleaseWaitMessage : "Waiting on operation to complete.",
+			close             : "Close",
+			abort             : "Abort",
+			confirm           : "Confirm",
+			cancel            : "Cancel"
 		};
 	}
-
 })();
