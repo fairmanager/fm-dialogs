@@ -8,6 +8,6 @@
 	<uib-progressbar class="progress-striped active" ng-hide="vm.hasProgress || vm.options.finished"></uib-progressbar>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" ng-click="vm.abort()" ng-show="!vm.options.finished">{{vm.abortLabel}}</button>
+	<button type="button" class="btn btn-default" ng-click="vm.cancel()" ng-show="!vm.options.finished">{{vm.cancelLabel}}</button>
 	<button type="button" class="btn btn-primary" ng-click="vm.close()" ng-show="vm.options.finished && !vm.options.autoClose">{{vm.closeLabel}}</button>
 </div>
