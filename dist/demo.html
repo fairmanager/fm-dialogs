@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+<head>
+	<title></title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
+</head>
+<body ng-controller="DemoController">
+<div class="container">
+	<div class="header">
+		<h3>fm-dialogs</h3>
+		<div class="row">
+			<div class="well">
+				<button class="btn btn-default" ng-click="alert();">Alert</button>
+				<button class="btn btn-warning" ng-click="confirm();">Confirm</button>
+				<button class="btn btn-danger" ng-click="error();">Error</button>
+				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
+				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
+			</div>
+		</div>
+		<div class="row">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<label>
+							<input type="checkbox" ng-model="autoClose"> Auto-close finished wait dialogs
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="result" class="col-sm-2 control-label">Result</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="result" placeholder="Results will appear here."
+							   readonly ng-model="result">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.js"></script>
+<script src="//cdn.rawgit.com/fairmanager/fm-error-analyzer/master/src/fm-error-analyzer.js"></script>
+<script src="fm-dialogs.tpls.js"></script>
+<script>
+	angular
+			.module( "demo", [ "fmDialogs" ] )
+			.controller( "DemoController", DemoController );
+
+	function DemoController( $interval, $scope, fmDialogs ) {
+		$scope.alert = function alert() {
+			$scope.result = "";
+
+			return fmDialogs
+					.alert( "<i>Something</i> happened and this is how I'm letting you know." )
+					.then( function() {
+						$scope.result = "Alert was closed";
+					} );
+		};
+
+		$scope.confirm = function alert() {
+			$scope.result = "";
+
+			return fmDialogs
+					.confirm( "Are you sure?" )
+					.then( function() {
+						$scope.result = "Dialog was confirmed";
+					} )
+					.catch( function() {
+						$scope.result = "Dialog was dismissed"
+					} );
+		};
+
+		$scope.error = function error() {
+			$scope.result = "";
+
+			var error = new ReferenceError( "I don't get it." );
+
+			return fmDialogs
+					.error( error, "Something went terribly wrong ☹" )
+					.then( function() {
+						$scope.result = "Error was closed";
+					} );
+		};
+
+		$scope.wait = function wait( withProgress ) {
+			$scope.result = "";
+
+			var options = {
+				progress  : withProgress ? 0 : undefined,
+				finished  : false,
+				autoClose : $scope.autoClose
+			};
+
+			var intervalPromise = $interval( function updateProgress() {
+				options.progress = options.progress || 1;
+				options.progress += Math.random() * 20;
+				options.finished = ( 100 <= options.progress );
+				if( options.finished ) {
+					options.status = "Completed";
+					$interval.cancel( intervalPromise );
+				}
+			}, 500 );
+
+			return fmDialogs
+					.wait( "This will just take a moment…", options )
+					.then( function() {
+						$scope.result = "Wait has finished";
+					} )
+					.catch( function() {
+						$scope.result = "Wait was aborted"
+					} )
+					.finally( function() {
+						if( withProgress ) {
+							$interval.cancel( intervalPromise );
+						}
+					} );
+		}
+	}
+</script>
+</body>
+</html>

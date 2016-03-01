@@ -1,13 +1,22 @@
 {
   "name": "fm-dialogs",
+  "description": "FairManager Dialog Component",
+  "homepage": "https://github.com/fairmanager/fm-dialogs",
+  "authors": [
+    "Oliver Salzburg <oliver.salzburg@gmail.com>"
+  ],
+  "main": "dist/fm-dialogs.tpls.js",
+  "license": "MIT",
+  "private": false,
   "dependencies": {
-    "angular": "~1.4.8",
-    "angular-bootstrap": "~0.14.3",
-    "angular-sanitize": "~1.4.8",
-    "bootstrap": "~3.3.6"
+    "angular": "^1.5.0",
+    "angular-bootstrap": "^1.2.1",
+    "bootstrap": "^3.3.6",
+    "fm-error-analyzer": "*"
   },
-  "main": [
-    "dialogs.css",
-    "dialogs.js"
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules"
   ]
 }

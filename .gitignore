@@ -1,4 +1,5 @@
 .idea/deployment.xml
 .idea/workspace.xml
-dist/
+bower_components/
 node_modules/
+npm-debug.log
