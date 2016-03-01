@@ -5,3 +5,4 @@ fm-dialogs
 
 A simple dialog service for **AngularJS** based on **Bootstrap**, inspired by original work of [Michael E Conroy](https://github.com/m-e-conroy/angular-dialog-service).
  
+![](https://i.imgur.com/UMWSwYa.png)

@@ -106,6 +106,10 @@
 		};
 
 		DialogsService.prototype.error = function DialogsService$error( error, body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
 			if( typeof title === "object" ) {
 				options = title;
 				title   = undefined;
@@ -130,6 +134,10 @@
 		DialogsService.prototype.notify = DialogsService.prototype.alert;
 
 		DialogsService.prototype.wait = function DialogsService$wait( body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
 			if( typeof title === "object" ) {
 				options = title;
 				title   = undefined;
@@ -145,7 +153,16 @@
 				}
 			) );
 
-			modalInstance.result.modal = modalInstance;
+			modalInstance.result.modal   = modalInstance;
+			modalInstance.result.options = options;
+
+			modalInstance.result.update = function update( progress, status ) {
+				options.progrss = progress;
+				options.status  = status;
+			};
+			modalInstance.result.close  = function close() {
+				modalInstance.close();
+			};
 
 			return modalInstance.result;
 		};
