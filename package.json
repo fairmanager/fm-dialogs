@@ -1,13 +1,13 @@
 {
   "name": "fm-dialogs",
-  "version": "6.7.0",
+  "version": "6.7.1",
   "description": "FairManager Dialog Component",
   "main": "dist/fm-dialogs.tpls.js",
   "dependencies": {
     "angular": "^1.5.0",
     "angular-ui-bootstrap": "^1.2.1",
     "bootstrap": "^3.3.6",
-    "fm-error-analyzer": "^1.4.0"
+    "fm-error-analyzer": "^1.4.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
