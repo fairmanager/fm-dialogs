@@ -1,0 +1,10 @@
+<div class="modal-header" ng-if="vm.title">
+	<button type="button" class="close" aria-hidden="true" ng-click="vm.cancel()">&times;</button>
+	<h4 class="modal-title">{{vm.title}}</h4>
+</div>
+<div class="modal-body">
+	<p ng-bind-html="vm.body | fmHtml"></p>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" ng-repeat="option in vm.options" ng-class="option.class" ng-click="vm.pick( option )">{{option.label}}</button>
+</div>
