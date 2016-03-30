@@ -33,6 +33,7 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title", "close"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title", "confirm", "cancel"];
+	PickController.$inject = ["$uibModalInstance", "body", "title", "options"];
 	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "cancel", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
@@ -50,6 +51,7 @@
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
 		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmPickController", PickController )
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
 		.filter( "fmHtml", htmlFilterProvider )
@@ -113,6 +115,33 @@
 					title   : resolver( title ),
 					confirm : resolver( options.confirm || this.strings.confirm ),
 					cancel  : resolver( options.cancel || this.strings.cancel )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
+		DialogsService.prototype.pick = function DialogsService$pick( body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			if( !options ) {
+				options = [ {
+					label : this.strings.cancel
+				} ];
+			}
+
+			var modalInstance = this.$uibModal.open( getModalDescription( "pick.html", "fmPickController", {
+					body    : resolver( body ),
+					title   : resolver( title ),
+					options : resolver( options )
 				}
 			) );
 
@@ -229,6 +258,22 @@
 	};
 
 	/* @ngInject */
+	function PickController( $uibModalInstance, body, title, options ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.options           = options;
+	}
+
+	PickController.prototype.cancel = function PickController$cancel() {
+		this.$uibModalInstance.dismiss();
+	};
+
+	PickController.prototype.pick = function PickController$pick( option ) {
+		this.$uibModalInstance.close( option );
+	};
+
+	/* @ngInject */
 	function ErrorController( $uibModalInstance, body, title, close, errors ) {
 		this.$uibModalInstance = $uibModalInstance;
 		this.body              = body;
@@ -295,6 +340,8 @@ angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.confirm()\">{{vm.confirmLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.cancel()\">{{vm.cancelLabel}}</button></div>");
   $templateCache.put("error.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><b class=\"text-danger\" ng-if=\"vm.errors.length\">{{vm.errors[0].message}}</b><p ng-if=\"1 <= vm.errors.length\"><span ng-repeat=\"error in vm.errors\" ng-if=\"$index > 0\">{{error.message}}<br></span></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">{{vm.closeLabel}}</button></div>");
+  $templateCache.put("pick.html",
+    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-repeat=\"option in vm.options\" ng-class=\"option.class\" ng-click=\"vm.pick( option )\">{{option.label}}</button></div>");
   $templateCache.put("wait.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><uib-progressbar value=\"vm.options.progress\" animate=\"true\" ng-show=\"vm.hasProgress\"></uib-progressbar><uib-progressbar class=\"progress-striped active\" ng-hide=\"vm.hasProgress || vm.options.finished\"></uib-progressbar></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.cancel()\" ng-show=\"vm.options.cancelable && !vm.options.finished\">{{vm.cancelLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">{{vm.closeLabel}}</button></div>");
 }]);

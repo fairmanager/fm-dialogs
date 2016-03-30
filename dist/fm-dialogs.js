@@ -33,6 +33,7 @@
 
 	AlertController.$inject = ["$uibModalInstance", "body", "title", "close"];
 	ConfirmController.$inject = ["$uibModalInstance", "body", "title", "confirm", "cancel"];
+	PickController.$inject = ["$uibModalInstance", "body", "title", "options"];
 	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "cancel", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
@@ -50,6 +51,7 @@
 		.provider( "fmDialogs", DialogsProvider )
 		.controller( "fmAlertController", AlertController )
 		.controller( "fmConfirmController", ConfirmController )
+		.controller( "fmPickController", PickController )
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
 		.filter( "fmHtml", htmlFilterProvider )
@@ -113,6 +115,33 @@
 					title   : resolver( title ),
 					confirm : resolver( options.confirm || this.strings.confirm ),
 					cancel  : resolver( options.cancel || this.strings.cancel )
+				}
+			) );
+
+			modalInstance.result.modal = modalInstance;
+
+			return modalInstance.result;
+		};
+
+		DialogsService.prototype.pick = function DialogsService$pick( body, title, options ) {
+			if( typeof body === "object" ) {
+				options = body;
+				body    = undefined;
+			}
+			if( typeof title === "object" ) {
+				options = title;
+				title   = undefined;
+			}
+			if( !options ) {
+				options = [ {
+					label : this.strings.cancel
+				} ];
+			}
+
+			var modalInstance = this.$uibModal.open( getModalDescription( "pick.html", "fmPickController", {
+					body    : resolver( body ),
+					title   : resolver( title ),
+					options : resolver( options )
 				}
 			) );
 
@@ -226,6 +255,22 @@
 
 	ConfirmController.prototype.confirm = function ConfirmController$confirm() {
 		this.$uibModalInstance.close();
+	};
+
+	/* @ngInject */
+	function PickController( $uibModalInstance, body, title, options ) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.body              = body;
+		this.title             = title;
+		this.options           = options;
+	}
+
+	PickController.prototype.cancel = function PickController$cancel() {
+		this.$uibModalInstance.dismiss();
+	};
+
+	PickController.prototype.pick = function PickController$pick( option ) {
+		this.$uibModalInstance.close( option );
 	};
 
 	/* @ngInject */
