@@ -13,6 +13,7 @@
 			<div class="well">
 				<button class="btn btn-default" ng-click="alert();">Alert</button>
 				<button class="btn btn-warning" ng-click="confirm();">Confirm</button>
+				<button class="btn btn-primary" ng-click="pick();">Pick</button>
 				<button class="btn btn-danger" ng-click="error();">Error</button>
 				<button class="btn btn-info" ng-click="wait( true );">Wait (progress)</button>
 				<button class="btn btn-info" ng-click="wait();">Wait (indefinitely)</button>
@@ -74,6 +75,20 @@
 					.confirm( "Are you sure?" )
 					.then( function() {
 						$scope.result = "Dialog was confirmed";
+					} )
+					.catch( function() {
+						$scope.result = "Dialog was dismissed"
+					} );
+		};
+
+		$scope.pick = function pick() {
+			$scope.result = "";
+
+			return fmDialogs
+					.pick( "What do you want to eat?",
+							[ { label : "Pizza" }, { label : "Cheezeburger!", class : "btn-primary" } ] )
+					.then( function( pickedOption ) {
+						$scope.result = "The user picked " + pickedOption.label;
 					} )
 					.catch( function() {
 						$scope.result = "Dialog was dismissed"
