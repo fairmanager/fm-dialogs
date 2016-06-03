@@ -3,7 +3,7 @@
 		"tasks": [
 			{
 				"name": "Build distribution files",
-				"command": "gulp",
+				"command": "grunt",
 				"comment": "[TASK] Build dist files"
 			}
 		]
