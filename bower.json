@@ -18,5 +18,6 @@
     "**/.*",
     "bower_components",
     "node_modules"
-  ]
+  ],
+  "version": "6.9.0"
 }
