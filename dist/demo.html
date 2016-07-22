@@ -86,7 +86,7 @@
 
 			return fmDialogs
 					.pick( "What do you want to eat?",
-							[ { label : "Pizza" }, { label : "Cheezeburger!", class : "btn-primary" } ] )
+							[ { label : "Pizza" }, { label : "Cheezeburger!", class : "btn-primary", autofocus: true } ] )
 					.then( function( pickedOption ) {
 						$scope.result = "The user picked " + pickedOption.label;
 					} )
