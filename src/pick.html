@@ -6,5 +6,5 @@
 	<p ng-bind-html="vm.body | fmHtml"></p>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" ng-repeat="option in vm.options" ng-class="option.class" ng-click="vm.pick( option )">{{option.label}}</button>
+	<button type="button" class="btn btn-default" ng-repeat="option in vm.options" ng-class="option.class" ng-click="vm.pick( option )" fm-auto-focus="option.autofocus">{{option.label}}</button>
 </div>
