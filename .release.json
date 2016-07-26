@@ -16,6 +16,13 @@
 				"args": [
 					"gh-pages"
 				]
+			},
+			{
+				"name": "Publish npm package",
+				"command": "npm",
+				"args": [
+					"publish"
+				]
 			}
 		]
 	},
