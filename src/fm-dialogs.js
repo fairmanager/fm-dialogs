@@ -331,14 +331,16 @@
 	 * @ngInject
 	 */
 	function autoFocus( $timeout ) {
-		return function( scope, element, attrs ) {
+		return function autoFocusDirective( scope, element, attrs ) {
 			scope.$watch( attrs.fmAutoFocus,
-				function( newValue ) {
-					if( newValue ) {
-						$timeout( function() {
-							element[0].focus();
-						}, 200 );
+				function onAutoFocusChanged( newValue ) {
+					if( !newValue ) {
+						return;
 					}
+
+					$timeout( function focusElement() {
+						element[ 0 ].focus();
+					}, 200 );
 				}, true );
 		};
 	}
