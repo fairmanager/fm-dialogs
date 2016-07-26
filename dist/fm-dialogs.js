@@ -37,6 +37,7 @@
 	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "cancel", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
+	autoFocus.$inject = ["$timeout"];
 	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
 	var dialogStrings = {
@@ -55,7 +56,8 @@
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
 		.filter( "fmHtml", htmlFilterProvider )
-		.value( "fmDialogsStrings", dialogStrings );
+		.value( "fmDialogsStrings", dialogStrings )
+		.directive( "fmAutoFocus", autoFocus );
 
 	function DialogsProvider() {
 		var self = this;
@@ -329,6 +331,23 @@
 	function htmlFilterProvider( $sce ) {
 		return function htmlFilter( input ) {
 			return $sce.trustAsHtml( input );
+		};
+	}
+
+	/**
+	 * Focus an input element if the given value evaluates to true.
+	 * @ngInject
+	 */
+	function autoFocus( $timeout ) {
+		return function( scope, element, attrs ) {
+			scope.$watch( attrs.fmAutoFocus,
+				function( newValue ) {
+					if( newValue ) {
+						$timeout( function() {
+							element[0].focus();
+						}, 200 );
+					}
+				}, true );
 		};
 	}
 })();
