@@ -26,7 +26,7 @@
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 
-(function() {
+( function _() {
 	"use strict";
 
 	/* globals angular */
@@ -344,4 +344,4 @@
 				}, true );
 		};
 	}
-})();
+} )();
