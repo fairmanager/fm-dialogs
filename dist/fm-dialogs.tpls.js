@@ -37,6 +37,7 @@
 	ErrorController.$inject = ["$uibModalInstance", "body", "title", "close", "errors"];
 	WaitController.$inject = ["$uibModalInstance", "$scope", "body", "title", "close", "cancel", "options"];
 	htmlFilterProvider.$inject = ["$sce"];
+	autoFocus.$inject = ["$timeout"];
 	angular.module( "fmDialogs", [ "fmErrorAnalyzer", "ui.bootstrap" ] );
 
 	var dialogStrings = {
@@ -55,7 +56,8 @@
 		.controller( "fmErrorController", ErrorController )
 		.controller( "fmWaitController", WaitController )
 		.filter( "fmHtml", htmlFilterProvider )
-		.value( "fmDialogsStrings", dialogStrings );
+		.value( "fmDialogsStrings", dialogStrings )
+		.directive( "fmAutoFocus", autoFocus );
 
 	function DialogsProvider() {
 		var self = this;
@@ -331,6 +333,23 @@
 			return $sce.trustAsHtml( input );
 		};
 	}
+
+	/**
+	 * Focus an input element if the given value evaluates to true.
+	 * @ngInject
+	 */
+	function autoFocus( $timeout ) {
+		return function( scope, element, attrs ) {
+			scope.$watch( attrs.fmAutoFocus,
+				function( newValue ) {
+					if( newValue ) {
+						$timeout( function() {
+							element[0].focus();
+						}, 200 );
+					}
+				}, true );
+		};
+	}
 })();
 
 angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
@@ -341,7 +360,7 @@ angular.module('fmDialogs').run(['$templateCache', function($templateCache) {
   $templateCache.put("error.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><b class=\"text-danger\" ng-if=\"vm.errors.length\">{{vm.errors[0].message}}</b><p ng-if=\"1 <= vm.errors.length\"><span ng-repeat=\"error in vm.errors\" ng-if=\"$index > 0\">{{error.message}}<br></span></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.close()\">{{vm.closeLabel}}</button></div>");
   $templateCache.put("pick.html",
-    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-repeat=\"option in vm.options\" ng-class=\"option.class\" ng-click=\"vm.pick( option )\">{{option.label}}</button></div>");
+    "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.cancel()\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-repeat=\"option in vm.options\" ng-class=\"option.class\" ng-click=\"vm.pick( option )\" fm-auto-focus=\"option.autofocus\">{{option.label}}</button></div>");
   $templateCache.put("wait.html",
     "<div class=\"modal-header\" ng-if=\"vm.title\"><button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">&times;</button><h4 class=\"modal-title\">{{vm.title}}</h4></div><div class=\"modal-body\"><p ng-bind-html=\"vm.body | fmHtml\"></p><uib-progressbar value=\"vm.options.progress\" animate=\"true\" ng-show=\"vm.hasProgress\"></uib-progressbar><uib-progressbar class=\"progress-striped active\" ng-hide=\"vm.hasProgress || vm.options.finished\"></uib-progressbar></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"vm.cancel()\" ng-show=\"vm.options.cancelable && !vm.options.finished\">{{vm.cancelLabel}}</button> <button type=\"button\" class=\"btn btn-primary\" ng-click=\"vm.close()\" ng-show=\"vm.options.finished && !vm.options.autoClose\">{{vm.closeLabel}}</button></div>");
 }]);

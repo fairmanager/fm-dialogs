@@ -1,5 +1,13 @@
+# Temporary grunt files
+.grunt/
+
+# WebStorm project files
 .idea/deployment.xml
 .idea/workspace.xml
+
+# Dependencies
 bower_components/
 node_modules/
+
+# npm debug output
 npm-debug.log
