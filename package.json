@@ -6,7 +6,7 @@
   "dependencies": {
     "angular": "^1.5.0",
     "angular-ui-bootstrap": "^1.2.1",
-    "fm-error-analyzer": "^1.4.2"
+    "fm-error-analyzer": "1.4.2"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
