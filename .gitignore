@@ -11,3 +11,4 @@ node_modules/
 
 # npm debug output
 npm-debug.log
+package-lock.json
