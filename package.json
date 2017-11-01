@@ -36,5 +36,9 @@
   "bugs": {
     "url": "https://github.com/fairmanager/fm-dialogs/issues"
   },
-  "homepage": "https://github.com/fairmanager/fm-dialogs"
+  "homepage": "https://github.com/fairmanager/fm-dialogs",
+  "engines": {
+    "node": "^8.9.0",
+    "npm": "~5.5.1"
+  }
 }
